@@ -50,8 +50,16 @@ def is_english_name(name: str) -> bool:
     return True
 
 
-def filter_nonenglish_names(names: list[str]) -> list:
+def filter_nonenglish_names(names: list[str]):
     """
     Remove names that are not considered English named entities.
     """
     return [name for name in names if is_english_name(name)]
+
+
+def remove_lowercased_duplicates(names: list[str]):
+    """
+    Remove lower-cased names if their upper-cased versions exist in the list.
+    """
+    uppercased_set = {name.upper() for name in names}  # Collect all names in uppercase form
+    return [name for name in names if name != name.lower() or name.upper() not in uppercased_set]
