@@ -46,8 +46,8 @@ def is_english_name(name: str) -> bool:
 
     for char in name:
         if char not in allowed_chars:
-            return True  # Strange because it contains a disallowed character
-    return False  # If we get here, all characters were allowed
+            return False
+    return True
 
 
 def filter_nonenglish_names(names: list[str]) -> list:
