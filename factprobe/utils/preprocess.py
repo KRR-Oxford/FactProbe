@@ -16,21 +16,22 @@ import string
 import re
 
 
-def clean_name(name: str):
-    # 1. Remove bracketed disambiguation
-    name = re.sub(r"\(.*?\)", "", name)
-    # 2. Remove underscores
+def clean_name(name: str, remove_parenthesis: bool=False):
+    # Remove bracketed disambiguation
+    if remove_parenthesis:
+        name = re.sub(r"\(.*?\)", "", name)
+    # Remove underscores
     name = name.replace("_", " ")
-    # 3. Strip extra spaces
+    # Strip extra spaces
     name = name.strip()
     return name
 
 
-def clean_names(names: list[str]):
+def clean_names(names: list[str], remove_parenthesis: bool=False):
     cleaned = []
     seen = set()
     for name in names:
-        name = clean_name(name)
+        name = clean_name(name, remove_parenthesis)
         # Filter out empty or very short synonyms if you want:
         if len(name) > 1 and name not in seen:
             cleaned.append(name)
@@ -42,7 +43,7 @@ def is_english_name(name: str) -> bool:
     """
     Return True if the name is considered an English named entity.
     """
-    allowed_chars = string.ascii_letters + string.digits + " '-.,"
+    allowed_chars = string.ascii_letters + string.digits + " '-.,()"
 
     for char in name:
         if char not in allowed_chars:
@@ -61,5 +62,11 @@ def remove_lowercased_duplicates(names: list[str]):
     """
     Remove lower-cased names if their upper-cased versions exist in the list.
     """
-    uppercased_set = {name.upper() for name in names}  # Collect all names in uppercase form
-    return [name for name in names if name != name.lower() or name.upper() not in uppercased_set]
+    uppercased_set = {
+        name.upper() for name in names
+    }  # Collect all names in uppercase form
+    return [
+        name
+        for name in names
+        if name != name.lower() or name.upper() not in uppercased_set
+    ]
