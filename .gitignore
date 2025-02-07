@@ -325,4 +325,5 @@ pyrightconfig.json
 
 data/
 testing/
+experiments/
 *test*.ipynb
