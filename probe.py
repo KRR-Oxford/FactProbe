@@ -27,8 +27,7 @@ def main(config_file: str):
     config = CfgNode(load_file(config_file))
 
     # 1. Load the preprocess data
-    relation = config.relation
-    df = pd.read_csv(f"data/cleaned/{relation}_triples.csv")
+    df = pd.read_csv(config.dataset)
 
     # 2. Filter the data according to the setting
     data = {
