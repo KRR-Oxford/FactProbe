@@ -91,6 +91,6 @@ class FactProbe:
         for _, v in results_backward.items():
             count_backward += int(any(v))
 
-        print(f"{count_forward}-{count_backward} / {len(data)} ({len(inputs_forward)})")
+        print(f"[{self.template_type}][{so_setting}] {count_forward}-{count_backward} / {len(data)} ({len(inputs_forward)})")
 
         return {"forward": results_forward, "backward": results_backward}
