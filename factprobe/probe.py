@@ -65,8 +65,9 @@ class FactProbe:
                 inputs_backward.append(
                     self.prompt_backward.render((s, self.relation_backward, o))
                 )
-        print("Example forward inputs:\n", random.choice(inputs_forward))
-        print("Example backward inputs:\n", random.choice(inputs_backward))
+        example_idx = random.randint(0, len(inputs_forward) - 1)
+        print("Example forward inputs:\n", inputs_forward[example_idx])
+        print("Example backward inputs:\n", inputs_backward[example_idx])
 
         # compute forward outputs
         outputs_forward = self.llm.chat(
