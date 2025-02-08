@@ -1,13 +1,8 @@
 # FactProbe
 
-## Data Processing Note
+## Project Note
 
-- Download `wikidata5m` from the official website, transform all the data files into `json`.
-- Compute `wikidata_freq` for each entity by calling wikidata API (approx two weeks on 5m entities).
-- Remove 9 entities that do not have wikidata frequencies (likely to be deprecated).
-- Compute 121 triples, relations w.r.t. wikidata5m (algorithm: for each `(s, r)`, `o` is unique and for each `(r, o)`, `s` is unique.); rank and select relations according to their frequencies in these triples.
-- 
-
+See Notion.
 
 ## Related Work
 
