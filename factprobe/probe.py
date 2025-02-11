@@ -15,7 +15,6 @@
 import pandas as pd
 import itertools
 import random
-from collections import defaultdict
 from tqdm.auto import tqdm
 from vllm import LLM, SamplingParams
 from factprobe.prompt import QuestionAnsweringPrompt, FactCheckingPrompt
@@ -67,30 +66,42 @@ class FactProbe:
                 )
         example_idx = random.randint(0, (len(inputs_forward) - 1))
         print(f"Example forward inputs [{example_idx}]:\n", inputs_forward[example_idx])
-        print(f"Example backward inputs [{example_idx}]:\n", inputs_backward[example_idx])
+        print(
+            f"Example backward inputs [{example_idx}]:\n", inputs_backward[example_idx]
+        )
 
         # compute forward outputs
         outputs_forward = self.llm.chat(
             inputs_forward, SamplingParams(logprobs=10, top_p=0.95)
         )
-        results_forward = defaultdict(list)
+        results_forward = dict()
         for output, k in zip(outputs_forward, keys):
-            results_forward[k].append(output.outputs[0].text.lower() == self.correct)
+            entry = results_forward.setdefault(k, {"answer": [], "logprobs": []})
+            entry["answer"].append(output.outputs[0].text.lower() == self.correct)
+            entry["logprobs"].append(
+                {k: v.__dict__ for k, v in output.outputs[0].logprobs[0].items()}
+            )
         count_forward = 0
         for _, v in results_forward.items():
-            count_forward += int(any(v))
+            count_forward += int(any(v["answer"]))
 
         # compute backwardward outputs
         outputs_backward = self.llm.chat(
             inputs_backward, SamplingParams(logprobs=10, top_p=0.95)
         )
-        results_backward = defaultdict(list)
+        results_backward = dict()
         for output, k in zip(outputs_backward, keys):
-            results_backward[k].append(output.outputs[0].text.lower() == self.correct)
+            entry = results_backward.setdefault(k, {"answer": [], "logprobs": []})
+            entry["answer"].append(output.outputs[0].text.lower() == self.correct)
+            entry["logprobs"].append(
+                {k: v.__dict__ for k, v in output.outputs[0].logprobs[0].items()}
+            )
         count_backward = 0
         for _, v in results_backward.items():
-            count_backward += int(any(v))
+            count_backward += int(any(v["answer"]))
 
-        print(f"[{self.template_type}][{so_setting}] {count_forward}-{count_backward} / {len(data)} ({len(inputs_forward)})")
+        print(
+            f"[{self.template_type}][{so_setting}] {count_forward}-{count_backward} / {len(data)} ({len(inputs_forward)})"
+        )
 
         return {"forward": results_forward, "backward": results_backward}
