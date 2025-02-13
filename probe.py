@@ -25,6 +25,8 @@ from yacs.config import CfgNode
 def main(config_file: str):
     # 0. Load the configuration file
     config = CfgNode(load_file(config_file))
+    model_suffix = config.model.split("/")[-1]
+    create_path(f"experiments/{config.relation}/{model_suffix}")
 
     # 1. Load the preprocess data
     df = pd.read_csv(config.dataset)
@@ -50,8 +52,6 @@ def main(config_file: str):
     # 5. Save the results
     for so_setting in data.keys():
         results = probe.probe(data[so_setting], so_setting)
-        model_suffix = config.model.split("/")[-1]
-        create_path(f"experiments/{config.relation}/{model_suffix}")
         save_file(
             {"forward": results["forward"], "backward": results["backward"]},
             f"experiments/{config.relation}/{model_suffix}/{config.relation}_{config.count_high}_{config.count_low}_{so_setting}_{config.template_type}.pkl",
