@@ -16,7 +16,7 @@ from pydantic import BaseModel, field_validator
 from typing import Tuple
 
 
-class QuestionAnsweringPrompt(BaseModel):
+class QuestionPrompt(BaseModel):
     instruction: str = "Please evaluate the statement or claim contained in the question. Respond with only one word—either 'Yes' if the claim is correct or 'No' if it is incorrect. Do not include any additional text or commentary."
     template: str
 
@@ -40,7 +40,7 @@ class QuestionAnsweringPrompt(BaseModel):
         return [system_input, user_input]
 
 
-class FactCheckingPrompt(BaseModel):
+class StatementPrompt(BaseModel):
     instruction: str = "Please evaluate the statement or claim. Respond with only one word—either 'True' if the claim is correct or 'False' if it is incorrect. Do not include any additional text or commentary."
     template: str
 

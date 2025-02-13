@@ -17,7 +17,7 @@ import itertools
 import random
 from tqdm.auto import tqdm
 from vllm import LLM, SamplingParams
-from factprobe.prompt import QuestionAnsweringPrompt, FactCheckingPrompt
+from factprobe.prompt import QuestionPrompt, StatementPrompt
 
 
 class FactProbe:
@@ -36,9 +36,8 @@ class FactProbe:
         assert self.template_type in ["qa", "fc"], (
             f"Invalid template type: {template_type}"
         )
-        self.prompt_cls = {"qa": QuestionAnsweringPrompt, "fc": FactCheckingPrompt}[
-            template_type
-        ]
+        # TODO: rename "fc" as fact checking has its definition
+        self.prompt_cls = {"qa": QuestionPrompt, "fc": StatementPrompt}[template_type]
         self.prompt_forward = self.prompt_cls(template=template_forward)
         self.prompt_backward = self.prompt_cls(template=template_backward)
         self.relation_forward = relation_forward
@@ -76,7 +75,9 @@ class FactProbe:
         )
         results_forward = dict()
         for output, k in zip(outputs_forward, keys):
-            entry = results_forward.setdefault(k, {"text": [], "answer_em": [], "answer_in": [], "logprobs": []})
+            entry = results_forward.setdefault(
+                k, {"text": [], "answer_em": [], "answer_in": [], "logprobs": []}
+            )
             entry["text"].append(output.outputs[0].text)
             entry["answer_em"].append(self.correct == output.outputs[0].text.lower())
             entry["answer_in"].append(self.correct in output.outputs[0].text.lower())
@@ -95,7 +96,9 @@ class FactProbe:
         )
         results_backward = dict()
         for output, k in zip(outputs_backward, keys):
-            entry = results_backward.setdefault(k, {"text": [], "answer_em": [], "answer_in": [], "logprobs": []})
+            entry = results_backward.setdefault(
+                k, {"text": [], "answer_em": [], "answer_in": [], "logprobs": []}
+            )
             entry["text"].append(output.outputs[0].text)
             entry["answer_em"].append(self.correct == output.outputs[0].text.lower())
             entry["answer_in"].append(self.correct in output.outputs[0].text.lower())
