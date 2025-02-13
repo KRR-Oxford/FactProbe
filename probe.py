@@ -16,7 +16,7 @@ import click
 import pandas as pd
 from vllm import LLM
 from factprobe.probe import FactProbe
-from deeponto.utils import save_file, load_file
+from deeponto.utils import save_file, load_file, create_path
 from yacs.config import CfgNode
 
 
@@ -50,9 +50,11 @@ def main(config_file: str):
     # 5. Save the results
     for so_setting in data.keys():
         results = probe.probe(data[so_setting], so_setting)
+        model_suffix = config.model.split("/")[-1]
+        create_path(f"experiments/{config.relation}/{model_suffix}")
         save_file(
             {"forward": results["forward"], "backward": results["backward"]},
-            f"experiments/{config.relation}/{config.relation}_{config.count_high}_{config.count_low}_{so_setting}_{config.template_type}.pkl",
+            f"experiments/{config.relation}/{model_suffix}/{config.relation}_{config.count_high}_{config.count_low}_{so_setting}_{config.template_type}.pkl",
         )
 
 

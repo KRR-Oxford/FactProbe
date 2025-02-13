@@ -76,14 +76,18 @@ class FactProbe:
         )
         results_forward = dict()
         for output, k in zip(outputs_forward, keys):
-            entry = results_forward.setdefault(k, {"answer": [], "logprobs": []})
-            entry["answer"].append(output.outputs[0].text.lower() == self.correct)
+            entry = results_forward.setdefault(k, {"text": [], "answer_em": [], "answer_in": [], "logprobs": []})
+            entry["text"].append(output.outputs[0].text)
+            entry["answer_em"].append(self.correct == output.outputs[0].text.lower())
+            entry["answer_in"].append(self.correct in output.outputs[0].text.lower())
             entry["logprobs"].append(
                 {k: v.__dict__ for k, v in output.outputs[0].logprobs[0].items()}
             )
-        count_forward = 0
+        count_forward_em = 0
+        count_forward_in = 0
         for _, v in results_forward.items():
-            count_forward += int(any(v["answer"]))
+            count_forward_em += int(any(v["answer_em"]))
+            count_forward_in += int(any(v["answer_in"]))
 
         # compute backwardward outputs
         outputs_backward = self.llm.chat(
@@ -91,17 +95,24 @@ class FactProbe:
         )
         results_backward = dict()
         for output, k in zip(outputs_backward, keys):
-            entry = results_backward.setdefault(k, {"answer": [], "logprobs": []})
-            entry["answer"].append(output.outputs[0].text.lower() == self.correct)
+            entry = results_forward.setdefault(k, {"text": [], "answer_em": [], "answer_in": [], "logprobs": []})
+            entry["text"].append(output.outputs[0].text)
+            entry["answer_em"].append(self.correct == output.outputs[0].text.lower())
+            entry["answer_in"].append(self.correct in output.outputs[0].text.lower())
             entry["logprobs"].append(
                 {k: v.__dict__ for k, v in output.outputs[0].logprobs[0].items()}
             )
-        count_backward = 0
+        count_backward_em = 0
+        count_backward_in = 0
         for _, v in results_backward.items():
-            count_backward += int(any(v["answer"]))
+            count_backward_em += int(any(v["answer_em"]))
+            count_backward_in += int(any(v["answer_in"]))
 
         print(
-            f"[{self.template_type}][{so_setting}] {count_forward}-{count_backward} / {len(data)} ({len(inputs_forward)})"
+            f"[{self.template_type}][{so_setting}][EM] {count_forward_em}-{count_backward_em} / {len(data)} ({len(inputs_forward)})"
+        )
+        print(
+            f"[{self.template_type}][{so_setting}][IN] {count_forward_in}-{count_backward_in} / {len(data)} ({len(inputs_forward)})"
         )
 
         return {"forward": results_forward, "backward": results_backward}
