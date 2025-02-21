@@ -22,7 +22,14 @@ from yacs.config import CfgNode
 
 @click.command()
 @click.option("--config_file", "-c", type=str, help="Path to the configuration file.")
-def main(config_file: str):
+@click.option(
+    "--run_all",
+    "-r",
+    type=bool,
+    help="Whether to ignore the high-low count threshold and run on all triples.",
+    default=False,
+)
+def main(config_file: str, run_all: bool):
     # 0. Load the configuration file
     config = CfgNode(load_file(config_file))
     model_suffix = config.model.split("/")[-1]
@@ -32,16 +39,20 @@ def main(config_file: str):
     df = pd.read_csv(config.dataset)
 
     # 2. Filter the data according to the setting
-    data = {
-        "high2low": df[
-            (df["subject_count"] >= config.count_high)
-            & (df["object_count"] <= config.count_low)
-        ],
-        "low2high": df[
-            (df["subject_count"] <= config.count_low)
-            & (df["object_count"] >= config.count_high)
-        ],
-    }
+    data = (
+        {
+            "high2low": df[
+                (df["subject_count"] >= config.count_high)
+                & (df["object_count"] <= config.count_low)
+            ],
+            "low2high": df[
+                (df["subject_count"] <= config.count_low)
+                & (df["object_count"] >= config.count_high)
+            ],
+        }
+        if not run_all
+        else df
+    )
 
     # 3. Initialise the LLM model
     llm = LLM(model=config.model, dtype="half")
@@ -50,11 +61,18 @@ def main(config_file: str):
     probe = FactProbe(llm=llm, **config)
 
     # 5. Save the results
-    for so_setting in data.keys():
-        results = probe.probe(data[so_setting], so_setting)
+    if not run_all:
+        for so_setting in data.keys():
+            results = probe.probe(data[so_setting], so_setting)
+            save_file(
+                {"forward": results["forward"], "backward": results["backward"]},
+                f"experiments/{config.relation}/{model_suffix}/{config.relation}_{config.count_high}_{config.count_low}_{so_setting}_{config.template_type}.pkl",
+            )
+    else:
+        results = probe.probe(data, "all")
         save_file(
             {"forward": results["forward"], "backward": results["backward"]},
-            f"experiments/{config.relation}/{model_suffix}/{config.relation}_{config.count_high}_{config.count_low}_{so_setting}_{config.template_type}.pkl",
+            f"experiments/{config.relation}/{model_suffix}/{config.relation}_{so_setting}_{config.template_type}.pkl",
         )
 
 
