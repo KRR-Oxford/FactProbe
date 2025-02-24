@@ -1,34 +1,14 @@
-defaults:
-  - _self_
+model: "allenai/OLMo-1B-Instruct-hf"
+dataset: "/path/to/data"
+relation: P26
+batch_size: 10000
 
-cuda_devices: [0, 1, 2, 3]
-script_path: ./FactProbe/probe.py
-base_data_dir: ./FactProbe/data
+count_high: 100000
+count_low: 1000
 
-relations:
-    - P47
-    - P50
-    - P166
-    - P190
-    - P26
-    - P460
-    - P3373
+template_type: question  # question or statement
 
-modes:
-  - fc
-  - qa
-
-models:
-  olmo2_13b:
-    name: allenai/OLMo-2-1124-13B-Instruct
-  olmo2_7b:
-    name: allenai/OLMo-2-1124-7B-Instruct
-  olmo1_7b:
-    name: allenai/OLMo-7B-Instruct-hf
-  llama31_8b:
-    name: meta-llama/Llama-3.1-8B-Instruct
-  mistral_7b:
-    name: mistralai/Mistral-7B-Instruct-v0.3
-
-test_mode: true
-run_all: true
+template_forward: "{subject} {predicate} {object}."
+relation_forward: "is married to"
+template_backward: "{object} {predicate} {subject}."
+relation_backward: "is married to"
