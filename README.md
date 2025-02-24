@@ -89,13 +89,9 @@ FactProbe/
 │   ├── probe.py              # Main probing logic
 │   └── evaluation.py         # Evaluation functions
 └── run.py                    # Entry point for running experiments
-└── config.yaml          # Configuration file for experiments
+└── config.yaml               # Configuration file for experiments
 ```
 
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-```
 
 
 ## Project Note
