@@ -1,0 +1,34 @@
+defaults:
+  - _self_
+
+cuda_devices: [0, 1, 2, 3]
+script_path: /dss/dssmcmlfs01/pn39qo/pn39qo-dss-0000/di35qir2/Dolma/FactProbe/probe.py
+base_data_dir: /dss/dssmcmlfs01/pn39qo/pn39qo-dss-0000/di35qir2/Dolma/FactProbe/data
+
+relations:
+    - P47
+    - P50
+    - P166
+    - P190
+    - P26
+    - P460
+    - P3373
+
+modes:
+  - fc
+  - qa
+
+models:
+  olmo2_13b:
+    name: allenai/OLMo-2-1124-13B-Instruct
+  olmo2_7b:
+    name: allenai/OLMo-2-1124-7B-Instruct
+  olmo1_7b:
+    name: allenai/OLMo-7B-Instruct-hf
+  llama31_8b:
+    name: meta-llama/Llama-3.1-8B-Instruct
+  mistral_7b:
+    name: mistralai/Mistral-7B-Instruct-v0.3
+
+test_mode: true
+run_all: true
