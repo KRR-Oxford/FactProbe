@@ -2,8 +2,8 @@ defaults:
   - _self_
 
 cuda_devices: [0, 1, 2, 3]
-script_path: /dss/dssmcmlfs01/pn39qo/pn39qo-dss-0000/di35qir2/Dolma/FactProbe/probe.py
-base_data_dir: /dss/dssmcmlfs01/pn39qo/pn39qo-dss-0000/di35qir2/Dolma/FactProbe/data
+script_path: ./FactProbe/probe.py
+base_data_dir: ./FactProbe/data
 
 relations:
     - P47
