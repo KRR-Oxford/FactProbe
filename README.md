@@ -82,8 +82,6 @@ run_all: true  # Set to true to ignore high-low count thresholds and process all
 
 ```
 FactProbe/
-├── data/
-│   └── config.yaml          # Configuration file for experiments
 ├── scripts/
 │   └── run_generation.sh     # Script to run generation tasks
 ├── probe/
@@ -91,6 +89,7 @@ FactProbe/
 │   ├── probe.py              # Main probing logic
 │   └── evaluation.py         # Evaluation functions
 └── run.py                    # Entry point for running experiments
+└── config.yaml          # Configuration file for experiments
 ```
 
 ## License
