@@ -206,7 +206,7 @@ def main(cfg):
 
 
 if __name__ == "__main__":
-    with initialize(config_path="./data", version_base="1.1"):
+    with initialize(config_path=".", version_base="1.1"):
         # Use overrides parameter
         cfg = compose(
             config_name="config",
