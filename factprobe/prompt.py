@@ -30,7 +30,7 @@ class QuestionPrompt(BaseModel):
             )
         return template
 
-    def render(self, triplet: Tuple[str, str, str]) -> str:
+    def render(self, triplet: Tuple[str, str, str]):
         system_input = {"role": "system", "content": self.instruction}
         s, r, o = triplet
         user_input = {
@@ -54,11 +54,28 @@ class StatementPrompt(BaseModel):
             )
         return template
 
-    def render(self, triplet: Tuple[str, str, str]) -> str:
+    def render(self, triplet: Tuple[str, str, str]):
         system_input = {"role": "system", "content": self.instruction}
         s, r, o = triplet
         user_input = {
             "role": "user",
             "content": self.template.format(subject=s, predicate=r, object=o),
         }
+        return [system_input, user_input]
+
+
+class AffirmationPrompt(BaseModel):
+    instruction: str = "You are an expert judge in natural language understanding. I will provide you with a text response from another model. Your task is to determine if this response semantically conveys an affirmative answer, equivalent to saying 'Yes' or 'True'. Please analyze the response and output a single word: 'Yes' if it indicates affirmation, or 'No' if it does not. Do not include any additional text or commentary."
+    
+    def render(self, response: str):
+        system_input = {"role": "system", "content": self.instruction}
+        user_input = {"role": "user", "content": response}
+        return [system_input, user_input]
+    
+class SemanticMatchPrompt(BaseModel):
+    instruction: str = "You are an expert judge in natural language understanding. I will provide you with two text responses. Your task is to determine whether these two responses are semantically equivalent, meaning they convey the same meaning even if the wording differs. Please analyze both responses and output a single word: 'Yes' if they are semantically matched, or 'No' if they are not. Do not include any additional text or commentary."
+    
+    def render(self, response_1: str, response_2: str):
+        system_input = {"role": "system", "content": self.instruction}
+        user_input = {"role": "user", "content": f"Response 1: {response_1}\nResponse2: {response_2}"}
         return [system_input, user_input]
