@@ -76,8 +76,8 @@ class FactProbe:
         for output, k in zip(outputs_backward, keys):
             entry = results_backward.setdefault(k, {"text": [], "answer_em": [], "answer_in": [], "logprobs": []})
             entry["text"].append(output.outputs[0].text)
-            entry["answer_em"].append(self.correct == output.outputs[0].text.lower())
-            entry["answer_in"].append(self.correct in output.outputs[0].text.lower())
+            entry["answer_em"].append(self.correct == output.outputs[0].text.lower().strip())
+            entry["answer_in"].append(self.correct in output.outputs[0].text.lower().strip())
             entry["logprobs"].append({k: v.__dict__ for k, v in output.outputs[0].logprobs[0].items()})
         count_backward_em = 0
         count_backward_in = 0
