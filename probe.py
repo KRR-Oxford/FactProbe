@@ -20,7 +20,7 @@ from typing import Optional
 from textwrap import dedent
 from yacs.config import CfgNode
 from deeponto.utils import save_file, load_file, create_path
-from vllm import LLM
+from vllm import LLM, SamplingParams
 from factprobe.probe import FactProbe
 
 # Configure logging
@@ -64,6 +64,7 @@ def main(config_file: str, model: Optional[str], run_all: bool, run_test: bool):
     # 3. Initialize the model and probe
     llm = LLM(model=config.model)
     probe = FactProbe(llm=llm, **config)
+    sampling_params = SamplingParams(logprobs=10, top_p=0.95)  # temperature=0.0 means greedy decoding
 
     # 4. Run inference with batched data
     def batch_iter(df: pd.DataFrame, batch_size: int):
@@ -97,7 +98,7 @@ def main(config_file: str, model: Optional[str], run_all: bool, run_test: bool):
                 continue
 
             # Run inference and update results
-            batch_results = probe.probe(batch)
+            batch_results = probe.probe(batch, sampling_params)
             results["forward"].update(batch_results["forward"])
             results["backward"].update(batch_results["backward"])
             save_file(results, file_path)  # Save intermediate results
