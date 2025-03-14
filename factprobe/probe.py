@@ -56,7 +56,7 @@ class FactProbe:
         print(f"Example backward inputs [{example_idx}]:\n", inputs_backward[example_idx])
 
         # compute forward outputs
-        outputs_forward = self.llm.chat(inputs_forward, SamplingParams(logprobs=10, top_p=0.95))
+        outputs_forward = self.llm.chat(inputs_forward, SamplingParams(logprobs=10, top_p=0.95, temperature=0.0))
         results_forward = dict()
         for output, k in zip(outputs_forward, keys):
             entry = results_forward.setdefault(k, {"text": [], "answer_em": [], "answer_in": [], "logprobs": []})
@@ -71,7 +71,7 @@ class FactProbe:
             count_forward_in += int(any(v["answer_in"]))
 
         # compute backwardward outputs
-        outputs_backward = self.llm.chat(inputs_backward, SamplingParams(logprobs=10, top_p=0.95))
+        outputs_backward = self.llm.chat(inputs_backward, SamplingParams(logprobs=10, top_p=0.95, temperature=0.0))
         results_backward = dict()
         for output, k in zip(outputs_backward, keys):
             entry = results_backward.setdefault(k, {"text": [], "answer_em": [], "answer_in": [], "logprobs": []})
