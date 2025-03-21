@@ -327,3 +327,4 @@ data/
 testing/
 experiments/
 *test*.ipynb
+.vscode
