@@ -2,12 +2,12 @@
 name = "factprobe"
 version = "0.1.0"
 description = "Code repository for the paper: Supposedly Equivalent Facts That Aren't? Entity Frequency in Pre-training Induces Asymmetry in LLMs"
-authors = ["Yuan He"]
+authors = ["Anonymous"]
 readme = "README.md"
 packages = [{include = "factprobe"}]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<4.0"
+python = ">=3.9,<4.0"
 vllm = "^0.3.0"
 pandas = "^2.0.0"
 numpy = "^1.24.0"
