@@ -86,10 +86,10 @@ class FactProbe:
             count_backward_in += int(any(v["answer_in"]))
 
         print(
-            f"[{self.template_type}][EM] {count_forward_em}-{count_backward_em} / {len(data)} ({len(inputs_forward)})"
+            f"[{self.template_type}][EM] {count_forward_em}-{count_backward_em} / {len(data)} ({len(inputs_forward)} its)"
         )
-        print(
-            f"[{self.template_type}][IN] {count_forward_in}-{count_backward_in} / {len(data)} ({len(inputs_forward)})"
-        )
+        # print(
+        #     f"[{self.template_type}][IN] {count_forward_in}-{count_backward_in} / {len(data)} ({len(inputs_forward)})"
+        # )
 
         return {"forward": results_forward, "backward": results_backward}

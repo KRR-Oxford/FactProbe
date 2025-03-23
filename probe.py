@@ -64,7 +64,7 @@ def main(config_file: str, model: Optional[str], run_all: bool, run_test: bool):
     # 3. Initialize the model and probe
     llm = LLM(model=config.model)
     probe = FactProbe(llm=llm, **config)
-    sampling_params = SamplingParams(logprobs=10, top_p=0.95)  # temperature=0.0 means greedy decoding
+    sampling_params = SamplingParams(logprobs=10, temperature=0.0)  # temperature=0.0 means greedy decoding
 
     # 4. Run inference with batched data
     def batch_iter(df: pd.DataFrame, batch_size: int):
