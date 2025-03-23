@@ -16,7 +16,7 @@ import string
 import re
 
 
-def clean_name(name: str, remove_parenthesis: bool=False):
+def clean_name(name: str, remove_parenthesis: bool = False):
     # Remove bracketed disambiguation
     if remove_parenthesis:
         name = re.sub(r"\(.*?\)", "", name)
@@ -27,7 +27,7 @@ def clean_name(name: str, remove_parenthesis: bool=False):
     return name
 
 
-def clean_names(names: list[str], remove_parenthesis: bool=False):
+def clean_names(names: list[str], remove_parenthesis: bool = False):
     cleaned = []
     seen = set()
     for name in names:
@@ -62,11 +62,5 @@ def remove_lowercased_duplicates(names: list[str]):
     """
     Remove lower-cased names if their upper-cased versions exist in the list.
     """
-    uppercased_set = {
-        name.upper() for name in names
-    }  # Collect all names in uppercase form
-    return [
-        name
-        for name in names
-        if name != name.lower() or name.upper() not in uppercased_set
-    ]
+    uppercased_set = {name.upper() for name in names}  # Collect all names in uppercase form
+    return [name for name in names if name != name.lower() or name.upper() not in uppercased_set]
