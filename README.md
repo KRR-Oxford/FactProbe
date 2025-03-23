@@ -25,7 +25,7 @@ Make sure you have the necessary GPU drivers and libraries installed (e.g., CUDA
 
 To run the main probing script, use the following command:
 
-```
+```bash
 python -m probe.py -c path/to/config.yaml
 ```
 
