@@ -1,4 +1,4 @@
-model: "allenai/OLMo-1B-Instruct-hf"
+model: "allenai/OLMo-2-1124-13B-Instruct"
 dataset: "/path/to/data"
 relation: P26
 batch_size: 10000
@@ -6,7 +6,7 @@ batch_size: 10000
 count_high: 100000
 count_low: 1000
 
-template_type: question  # question or statement
+template_type: statement  # question or statement
 
 template_forward: "{subject} {predicate} {object}."
 relation_forward: "is married to"
