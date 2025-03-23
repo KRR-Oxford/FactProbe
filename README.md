@@ -1,32 +1,22 @@
 # FactProbe
 
+Code repository for the paper: [Supposedly Equivalent Facts That Aren't? Entity Frequency in Pre-training Induces Asymmetry in LLMs](link_to_be_given)
 
-FactProbe is a framework designed for probing and evaluating various models on knowledge graph triples. It supports multiple configurations and allows users to run experiments with different models and settings.
-
-## Table of Contents
-
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [File Structure](#file-structure)
-- [License](#license)
-
-## Features
-
-- Support for multiple models (e.g., OLMo, Llama).
-- Configurable parameters for running experiments.
-- Batch processing of data with GPU support.
-- Data integrity validation after processing.
 
 ## Installation
 
-To set up the project, clone the repository and install the required dependencies:
+To set up the project, you'll need Poetry (a modern Python package manager). If you don't have Poetry installed, install it first:
 
+```bash
+curl -sSL https://install.python-poetry.org | python3 -
 ```
-git clone https://github.com/yourusername/FactProbe.git
+
+Then clone and install the project:
+
+```bash
+git clone https://github.com/KRR-Oxford/FactProbe.git
 cd FactProbe
-pip install -r requirements.txt
+poetry install
 ```
 
 Make sure you have the necessary GPU drivers and libraries installed (e.g., CUDA).
@@ -36,62 +26,8 @@ Make sure you have the necessary GPU drivers and libraries installed (e.g., CUDA
 To run the main probing script, use the following command:
 
 ```
-python -m FactProbe.run --config_file path/to/config.yaml
+python -m probe.py -c path/to/config.yaml
 ```
-
-You can specify additional options such as `--test` to run in test mode or `--run_all` to ignore high-low count thresholds and process all triples.
-
-## Configuration
-
-The configuration file (`config.yaml`) allows you to set various parameters for your experiments. Here are some key parameters:
-
-- `cuda_devices`: List of available GPU devices.
-- `script_path`: Path to the probing script.
-- `relations`: List of relations to probe.
-- `modes`: Different modes of operation (e.g., `fc`, `qa`).
-- `models`: Configuration for different models.
-- `test_mode`: Set to `true` to run in test mode with limited samples.
-- `run_all`: Set to `true` to ignore high-low count thresholds and process all triples.
-
-### Example Configuration
-```
-defaults:
-  - _self_
-
-cuda_devices: [0, 1, 2, 3]
-script_path: /path/to/probe.py
-base_data_dir: /path/to/data
-
-relations:
-    - P47
-    - P50
-
-modes:
-  - fc
-  - qa
-
-models:
-  olmo2_13b:
-    name: allenai/OLMo-2-1124-13B-Instruct
-
-test_mode: false
-run_all: true  # Set to true to ignore high-low count thresholds and process all triples
-```
-
-## File Structure
-
-```
-FactProbe/
-├── scripts/
-│   └── run_generation.sh     # Script to run generation tasks
-├── probe/
-│   ├── __init__.py
-│   ├── probe.py              # Main probing logic
-│   └── evaluation.py         # Evaluation functions
-└── run.py                    # Entry point for running experiments
-└── config.yaml               # Configuration file for experiments
-```
-
 
 
 ## Project Note

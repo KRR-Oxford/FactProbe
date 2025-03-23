@@ -1,2 +1,27 @@
+[tool.poetry]
+name = "factprobe"
+version = "0.1.0"
+description = "Code repository for the paper: Supposedly Equivalent Facts That Aren't? Entity Frequency in Pre-training Induces Asymmetry in LLMs"
+authors = ["Yuan He"]
+readme = "README.md"
+packages = [{include = "factprobe"}]
+
+[tool.poetry.dependencies]
+python = ">=3.8,<4.0"
+vllm = "^0.3.0"
+pandas = "^2.0.0"
+numpy = "^1.24.0"
+tqdm = "^4.65.0"
+click = "^8.0.0"
+pydantic = "^2.0.0"
+requests = "^2.31.0"
+scipy = "^1.12.0"
+yacs = "^0.1.8"
+deeponto = "^0.9.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.ruff]
 line-length = 120
