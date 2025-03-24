@@ -62,7 +62,7 @@ def main(config_file: str, model: Optional[str], run_all: bool, run_test: bool):
         data_dict = {"all": df}
 
     # 3. Initialize the model and probe
-    llm = LLM(model=config.model)
+    llm = LLM(model=config.model)  # dtype="half"
     probe = FactProbe(llm=llm, **config)
     sampling_params = SamplingParams(logprobs=10, temperature=0.0)  # temperature=0.0 means greedy decoding
 

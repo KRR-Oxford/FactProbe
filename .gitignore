@@ -326,6 +326,5 @@ pyrightconfig.json
 data/
 testing/
 experiments
-*test*.ipynb
-*test*.py
+*test*
 .vscode

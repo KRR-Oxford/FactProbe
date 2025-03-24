@@ -1,4 +1,4 @@
-model: "allenai/OLMo-2-1124-13B-Instruct"
+model: "allenai/OLMo-2-0325-32B-Instruct"
 dataset: "/path/to/data"
 relation: P26
 batch_size: 10000
