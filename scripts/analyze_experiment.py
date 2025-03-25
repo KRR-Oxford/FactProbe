@@ -4,7 +4,7 @@ from typing import Dict, Any
 import click
 import pandas as pd
 from deeponto.utils import load_file, save_file
-from factprobe.utils.analysis import analyse_results_all_freqs, freq_dict_from_triple_df
+from factprobe.utils.analysis import analyse_results_all_freqs, analyse_results_for_low_freq_range, freq_dict_from_triple_df
 
 
 def analyze_experiment(
@@ -37,11 +37,22 @@ def analyze_experiment(
     # Analyze results for different directions
     analysis_results = {}
     for direction in ['high2low', 'low2high', 'high2high']:
-        analysis_results[direction] = analyse_results_all_freqs(
-            results,
-            freq_dict,
-            direction
-        )
+        if direction != 'high2high':
+            analysis_results[direction] = analyse_results_all_freqs(
+                results,
+                freq_dict,
+                direction
+            )
+        else:
+            analysis_results[direction] = {"$\geq$100K": 
+                analyse_results_for_low_freq_range(
+                results,
+                freq_dict,
+                direction,
+                -1,
+                -1,
+            )
+            }
     
     # Save the analysis results
     save_file(analysis_results, output_path)
