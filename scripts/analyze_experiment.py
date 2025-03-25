@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# Copyright 2025 Yuan He
-
 from pathlib import Path
 from typing import Dict, Any
 
