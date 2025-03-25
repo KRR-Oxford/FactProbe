@@ -327,4 +327,5 @@ data/
 testing/
 experiments
 *test*
+analysis
 .vscode

@@ -12,11 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Callable, Dict, Tuple
 import pandas as pd
 from .stats import mcnemar_p
 
+# Constants
+HIGH_FREQ_THRESHOLD = 100000
+DIRECTION_HIGH2LOW = "high2low"
+DIRECTION_LOW2HIGH = "low2high"
+DIRECTION_HIGH2HIGH = "high2high"
+VALID_DIRECTIONS = {DIRECTION_HIGH2LOW, DIRECTION_LOW2HIGH, DIRECTION_HIGH2HIGH}
 
-def freq_dict_from_triple_df(triple_df: pd.DataFrame) -> dict[str, int]:
+# Type aliases
+FreqDict = Dict[str, int]
+TripleKey = Tuple[str, str]
+
+
+def freq_dict_from_triple_df(triple_df: pd.DataFrame) -> FreqDict:
     """
     Extract a frequency dictionary from a triple DataFrame.
 
@@ -31,23 +43,59 @@ def freq_dict_from_triple_df(triple_df: pd.DataFrame) -> dict[str, int]:
     return freq_dict
 
 
-def freq_condition(freq_dict: dict, direction: str, low_freq_start: int, low_freq_end: int):
+def freq_condition(
+    freq_dict: FreqDict, direction: str, low_freq_start: int, low_freq_end: int
+) -> Callable[[str, str], bool]:
+    """Create a function that checks if subject and object frequencies meet specified conditions.
+
+    Args:
+        freq_dict: Dictionary mapping entities to their frequencies
+        direction: One of 'high2low', 'low2high', or 'high2high'
+        low_freq_start: Lower bound for low frequency range
+        low_freq_end: Upper bound for low frequency range
+
+    Returns:
+        A function that takes subject and object strings and returns whether they meet frequency conditions
+
+    Raises:
+        ValueError: If direction is not one of the valid options
     """
-    Return a function that checks if a subject and object are in the given frequency range.
-    """
-    if direction == "high2low":
-        return lambda s, o: (freq_dict[s] >= 100000 and freq_dict[o] <= low_freq_end and freq_dict[o] >= low_freq_start)
-    elif direction == "low2high":
-        return lambda s, o: (freq_dict[s] <= low_freq_end and freq_dict[s] >= low_freq_start and freq_dict[o] >= 100000)
-    elif direction == "high2high":
-        return lambda s, o: (freq_dict[s] >= 100000 and freq_dict[o] >= 100000)
-    else:
-        raise ValueError("Unknown direction: " + direction)
+
+    if direction not in VALID_DIRECTIONS:
+        raise ValueError(f"Unknown direction: {direction}. Must be one of {VALID_DIRECTIONS}")
+
+    if direction == DIRECTION_HIGH2LOW:
+        return lambda s, o: (freq_dict[s] >= HIGH_FREQ_THRESHOLD and low_freq_start <= freq_dict[o] <= low_freq_end)
+    elif direction == DIRECTION_LOW2HIGH:
+        return lambda s, o: (low_freq_start <= freq_dict[s] <= low_freq_end and freq_dict[o] >= HIGH_FREQ_THRESHOLD)
+    else:  # high2high
+        return lambda s, o: (freq_dict[s] >= HIGH_FREQ_THRESHOLD and freq_dict[o] >= HIGH_FREQ_THRESHOLD)
 
 
 def analyse_results_for_low_freq_range(
-    results: dict, freq_dict: dict, direction: str, low_freq_start: int, low_freq_end: int
-):
+    results: Dict[str, Dict[TripleKey, Dict]],
+    freq_dict: FreqDict,
+    direction: str,
+    low_freq_start: int,
+    low_freq_end: int,
+) -> Dict[str, float | int | str]:
+    """Analyze results for a specific frequency range.
+
+    Args:
+        results: Dictionary containing forward and backward results
+        freq_dict: Dictionary mapping entities to their frequencies
+        direction: Direction of analysis ('high2low', 'low2high', or 'high2high')
+        low_freq_start: Lower bound for low frequency range
+        low_freq_end: Upper bound for low frequency range
+
+    Returns:
+        Dictionary containing analysis statistics including:
+        - total: Total number of samples
+        - forward_acc: Forward accuracy
+        - backward_acc: Backward accuracy
+        - diff_arrow: Visual indicator of performance difference
+        - stat_sig: Statistical significance indicator
+    """
     n10 = 0
     n01 = 0
     total = 0
@@ -101,7 +149,19 @@ def analyse_results_for_low_freq_range(
     }
 
 
-def analyse_results_all_freqs(results: dict, freq_dict: dict, direction: str):
+def analyse_results_all_freqs(
+    results: Dict[str, Dict[TripleKey, Dict]], freq_dict: FreqDict, direction: str
+) -> Dict[str, Dict[str, float | int | str]]:
+    """Analyze results across all frequency ranges.
+
+    Args:
+        results: Dictionary containing forward and backward results
+        freq_dict: Dictionary mapping entities to their frequencies
+        direction: Direction of analysis ('high2low', 'low2high', or 'high2high')
+
+    Returns:
+        Dictionary mapping frequency ranges to their analysis statistics
+    """
     stats = {}
 
     for ls, le in [(0, 1000), (1000, 10000), (10000, 100000)]:
@@ -109,47 +169,3 @@ def analyse_results_all_freqs(results: dict, freq_dict: dict, direction: str):
         stats[k] = analyse_results_for_low_freq_range(results, freq_dict, direction, ls, le)
 
     return stats
-
-
-def results_to_latex(
-    results_question: dict, results_statement: dict, freq_dict: dict, direction: str, relation_name: str
-):
-    results_question = analyse_results_all_freqs(results_question, freq_dict, direction)
-    results_statement = analyse_results_all_freqs(results_statement, freq_dict, direction)
-
-    if direction != "high2high":
-        print("\\multirow{3}{*}{" + "\\textsf{" + relation_name + "}" + "}")
-    else:
-        print("\\multirow{1}{*}{" + "\\textsf{" + relation_name + "}" + "}")
-        
-    for k in results_question:
-        forward_acc_question = results_question[k]["forward_acc"]
-        backward_acc_question = results_question[k]["backward_acc"]
-        forward_acc_statement = results_statement[k]["forward_acc"]
-        backward_acc_statement = results_statement[k]["backward_acc"]
-        total_question = results_question[k]["total"]
-        total_statement = results_statement[k]["total"]
-        assert total_question == total_statement
-        print(
-            "&",
-            k,
-            "&",
-            results_question[k]["total"],
-            "&",
-            f"{forward_acc_question:.3f}",
-            "&",
-            f"{backward_acc_question:.3f}",
-            "&",
-            results_question[k]["diff_arrow"],
-            "&",
-            results_question[k]["stat_sig"],
-            "&",
-            f"{forward_acc_statement:.3f}",
-            "&",
-            f"{backward_acc_statement:.3f}",
-            "&",
-            results_statement[k]["diff_arrow"],
-            "&",
-            results_statement[k]["stat_sig"],
-            "\\\\",
-        )
