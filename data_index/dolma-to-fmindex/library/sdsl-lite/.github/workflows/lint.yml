@@ -1,0 +1,45 @@
+name: Linting
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: lint-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  TZ: Europe/Berlin
+
+defaults:
+  run:
+    shell: bash -Eexuo pipefail {0}
+
+jobs:
+  lint:
+    name: Linting
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run clang-format
+        uses: DoozyX/clang-format-lint-action@v0.18
+        with:
+          source: '.'
+          exclude: './external'
+          extensions: 'h,hpp,hpp.cmake,cpp'
+          clangFormatVersion: 15
+          inplace: True
+          
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: '[MISC] Format code'
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          body: Auto-generated clang-format changes
+          signoff: false
+          branch: actions/clang-format
+          delete-branch: true
+          title: '[MISC] Format code'
+          reviewers: ${{ github.actor }}
+          draft: false
