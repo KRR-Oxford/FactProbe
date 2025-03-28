@@ -2,6 +2,9 @@
 
 Code repository for the paper: [Supposedly Equivalent Facts That Aren't? Entity Frequency in Pre-training Induces Asymmetry in LLMs](under_review)
 
+- `factprobe`: main code for probing
+- `data_index`: code for Dolma pre-training data indexing
+
 
 ## Installation
 
