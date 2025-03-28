@@ -4,7 +4,7 @@ Code repository for the paper: [Supposedly Equivalent Facts That Aren't? Entity 
 
 - `factprobe`: main code for probing
 - `data_index`: code for Dolma pre-training data indexing
-
+- Download probing datasets from: https://zenodo.org/records/15092789
 
 ## Installation
 
