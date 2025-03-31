@@ -1,6 +1,6 @@
 # FactProbe
 
-Code repository for the paper: [Supposedly Equivalent Facts That Aren't? Entity Frequency in Pre-training Induces Asymmetry in LLMs](under_review)
+Code repository for the paper: [Supposedly Equivalent Facts That Aren't? Entity Frequency in Pre-training Induces Asymmetry in LLMs](https://arxiv.org/abs/2503.22362)
 
 - `factprobe`: main code for probing
 - `data_index`: code for Dolma pre-training data indexing
